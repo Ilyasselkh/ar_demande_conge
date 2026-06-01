@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue liste -->
+    <record id="view_ar_demande_conge_documentation_tree" model="ir.ui.view">
+        <field name="name">ar.demande.conge.documentation.tree</field>
+        <field name="model">ar.demande.conge.documentation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="description"/>
+                <field name="file_name"/>
+                <field name="link_url"/>
+                <field name="created_by"/>
+                <field name="created_on"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire -->
+    <record id="view_ar_demande_conge_documentation_form" model="ir.ui.view">
+        <field name="name">ar.demande.conge.documentation.form</field>
+        <field name="model">ar.demande.conge.documentation</field>
+        <field name="arch" type="xml">
+            <form string="Documentation - Demande Congé">
+                <sheet>
+                    <group>
+                        <field name="description"/>
+                        <field name="file_data" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <field name="link_url" placeholder="https://..."/>
+                    </group>
+
+                    <group string="Audit">
+                        <field name="created_by" readonly="1"/>
+                        <field name="created_on" readonly="1"/>
+                    </group>
+
+                    <chatter/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ar_demande_conge_documentation" model="ir.actions.act_window">
+        <field name="name">Documentation</field>
+        <field name="res_model">ar.demande.conge.documentation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

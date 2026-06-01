@@ -1,0 +1,502 @@
+<odoo>
+
+    <!-- ========================= -->
+    <!-- LIST VIEW -->
+    <!-- ========================= -->
+    <record id="view_ar_demande_conge_tree" model="ir.ui.view">
+        <field name="name">ar.demande.conge.tree</field>
+        <field name="model">ar.demande.conge</field>
+        <field name="arch" type="xml">
+            <list create="0"
+                  decoration-success="state == 'acceptee'"
+                  decoration-danger="state == 'refusee'"
+                  decoration-warning="state in ['validation_solde', 'validation_n1', 'validation_rh', 'validation_md']"
+                  decoration-muted="state == 'expression_besoin'">
+                <field name="name" string="Référence"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-success="state == 'acceptee'"
+                       decoration-danger="state == 'refusee'"
+                       decoration-warning="state in ['validation_solde', 'validation_n1', 'validation_rh', 'validation_md']"
+                       decoration-info="state == 'expression_besoin'"/>
+                <field name="demande_type" widget="badge"/>
+                <field name="demandeur_id" string="Collaborateur"/>
+                <field name="manager_id"/>
+                <field name="department_id"/>
+                <field name="date_debut" string="Début"/>
+                <field name="date_fin" string="Fin"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- KANBAN VIEW -->
+    <!-- ========================= -->
+    <record id="view_ar_demande_conge_kanban" model="ir.ui.view">
+        <field name="name">ar.demande.conge.kanban</field>
+        <field name="model">ar.demande.conge</field>
+        <field name="arch" type="xml">
+            <kanban class="ar_demande_conge_kanban" default_group_by="state" quick_create="false">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="demande_type"/>
+                <field name="demandeur_id"/>
+                <field name="manager_id"/>
+                <field name="department_id"/>
+                <field name="date_debut"/>
+                <field name="date_fin"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_global_click oe_kanban_card ar_request_card ar_state_#{record.state.raw_value}">
+                            <div class="ar_card_topline"/>
+                            <div class="ar_card_header">
+                                <div>
+                                    <span class="ar_card_ref"><field name="name"/></span>
+                                    <strong class="ar_card_title"><field name="demande_type"/></strong>
+                                </div>
+                                <span class="ar_card_state"><field name="state"/></span>
+                            </div>
+
+                            <div class="ar_card_person">
+                                <span class="ar_card_avatar"><i class="fa fa-user"/></span>
+                                <div>
+                                    <span class="ar_card_label">Collaborateur</span>
+                                    <strong><field name="demandeur_id"/></strong>
+                                </div>
+                            </div>
+
+                            <div class="ar_card_meta">
+                                <span><i class="fa fa-sitemap"/> <field name="department_id"/></span>
+                                <span><i class="fa fa-check-circle"/> <field name="manager_id"/></span>
+                            </div>
+
+                            <div class="ar_card_dates">
+                                <span><i class="fa fa-calendar-o"/> <field name="date_debut"/></span>
+                                <span><i class="fa fa-calendar-check-o"/> <field name="date_fin"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- CALENDAR VIEW -->
+    <!-- ========================= -->
+    <record id="view_ar_demande_conge_calendar" model="ir.ui.view">
+        <field name="name">ar.demande.conge.calendar</field>
+        <field name="model">ar.demande.conge</field>
+        <field name="arch" type="xml">
+            <calendar string="Calendrier des demandes"
+                      date_start="date_debut"
+                      date_stop="date_fin"
+                      quick_create="false"
+                      event_open_popup="true"
+                      color="state">
+                <field name="name"/>
+                <field name="demande_type"/>
+                <field name="demandeur_id" filters="true"/>
+                <field name="manager_id" filters="true"/>
+                <field name="state" filters="true"/>
+                <field name="department_id" filters="true"/>
+                <field name="date_fin"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- WIZARD ACTION -->
+    <!-- ========================= -->
+    <record id="view_ar_demande_conge_action_wizard_form" model="ir.ui.view">
+        <field name="name">ar.demande.conge.action.wizard.form</field>
+        <field name="model">ar.demande.conge.action.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirmation" class="ar_demande_conge_action_wizard">
+                <field name="demande_id" invisible="1"/>
+                <field name="action_type" invisible="1"/>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'modify'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_modify">i</div>
+                    <h2>Confirmer la modification</h2>
+                    <p>Voulez-vous vraiment remettre cette demande en expression de besoin ?</p>
+                </div>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'validate_solde'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_validate">OK</div>
+                    <h2>Confirmer la validation du solde</h2>
+                    <p>Voulez-vous vraiment valider cette demande au niveau service administratif ?</p>
+                </div>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'validate_n1'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_validate">OK</div>
+                    <h2>Confirmer la validation N+1</h2>
+                    <p>Voulez-vous vraiment valider cette demande au niveau N+1 ?</p>
+                </div>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'validate_rh'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_validate">OK</div>
+                    <h2>Confirmer la validation RH</h2>
+                    <p>Voulez-vous vraiment valider cette demande au niveau RH ?</p>
+                </div>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'send_md'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_send">MD</div>
+                    <h2>Confirmer l'envoi a MD</h2>
+                    <p>Voulez-vous vraiment envoyer cette demande au niveau MD ?</p>
+                </div>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'validate_md'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_validate">OK</div>
+                    <h2>Confirmer la validation MD</h2>
+                    <p>Voulez-vous vraiment valider definitivement cette demande ?</p>
+                </div>
+
+                <div class="ar_conge_wizard_message" invisible="action_type != 'refuse'">
+                    <div class="ar_conge_wizard_icon ar_conge_wizard_icon_refuse">!</div>
+                    <h2>Confirmer le refus</h2>
+                    <p>Voulez-vous vraiment refuser cette demande ?</p>
+                </div>
+
+                <footer>
+                    <button name="action_confirm"
+                            string="Confirmer"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Annuler"
+                            special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- FORM VIEW -->
+    <!-- ========================= -->
+    <record id="view_ar_demande_conge_form" model="ir.ui.view">
+        <field name="name">ar.demande.conge.form</field>
+        <field name="model">ar.demande.conge</field>
+        <field name="arch" type="xml">
+            <form string="Demande RH" class="ar_demande_conge_form">
+                <header>
+                    <button name="action_soumettre"
+                            string="Soumettre"
+                            type="object"
+                            class="btn-primary oe_highlight"
+                            invisible="state != 'expression_besoin'"/>
+
+                    <button name="action_open_validate_solde_wizard"
+                            string="Valider"
+                            type="object"
+                            class="btn-success oe_highlight"
+                            invisible="state != 'validation_solde' or not can_validate_solde"/>
+
+                    <button name="action_open_validate_n1_wizard"
+                            string="Valider"
+                            type="object"
+                            class="btn-success oe_highlight"
+                            invisible="state != 'validation_n1' or not can_validate_n1"/>
+
+                    <button name="action_open_validate_rh_wizard"
+                            string="Valider"
+                            type="object"
+                            class="btn-success oe_highlight"
+                            invisible="state != 'validation_rh' or not can_validate_rh"/>
+
+                    <button name="action_open_send_md_wizard"
+                            string="Envoyer à MD"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'validation_rh' or not can_validate_rh"/>
+
+                    <button name="action_open_validate_md_wizard"
+                            string="Valider"
+                            type="object"
+                            class="btn-success oe_highlight"
+                            invisible="state != 'validation_md' or not can_validate_md"/>
+
+                    <button name="action_open_refuse_wizard"
+                            string="Refuser"
+                            type="object"
+                            class="btn-danger"
+                            invisible="not can_refuse"/>
+
+                    <button name="action_open_modify_wizard"
+                            string="Modifier"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="not can_modify or state in ['acceptee', 'refusee']"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="expression_besoin,validation_solde,validation_n1,validation_rh,validation_md,acceptee,refusee"/>
+                </header>
+
+                <sheet class="ar_demande_conge_sheet">
+                    <widget name="web_ribbon" title="Acceptée" bg_color="text-bg-success" invisible="state != 'acceptee'"/>
+                    <widget name="web_ribbon" title="Refusée" bg_color="text-bg-danger" invisible="state != 'refusee'"/>
+
+                    <field name="can_validate_solde" invisible="1"/>
+                    <field name="can_validate_n1" invisible="1"/>
+                    <field name="can_validate_rh" invisible="1"/>
+                    <field name="can_validate_md" invisible="1"/>
+                    <field name="can_refuse" invisible="1"/>
+                    <field name="can_modify" invisible="1"/>
+                    <field name="md_requis" invisible="1"/>
+                    <field name="is_rh_user" invisible="1"/>
+                    <field name="can_edit_hs_lines" invisible="1"/>
+                    <field name="piece_jointe_filename" invisible="1"/>
+
+                    <div class="ar_request_header">
+                        <div class="ar_request_mark">
+                            <i class="fa fa-briefcase"/>
+                        </div>
+                        <div class="ar_request_title">
+                            <span class="ar_request_eyebrow">Demande RH</span>
+                            <h1>
+                                <field name="name" readonly="1" nolabel="1"/>
+                            </h1>
+                            <div class="ar_request_subtitle">
+                                <field name="demande_type" readonly="1" force_save="1" nolabel="1"/>
+                            </div>
+                            <div class="ar_request_visual" aria-hidden="true">
+                                <span class="ar_doc_sheet"/>
+                                <span class="ar_doc_card"/>
+                                <span class="ar_doc_clip"/>
+                            </div>
+                        </div>
+                        <div class="ar_request_status">
+                            <span class="ar_status_label">Statut actuel</span>
+                            <field name="state"
+                                   readonly="1"
+                                   widget="badge"
+                                   nolabel="1"
+                                   decoration-success="state == 'acceptee'"
+                                   decoration-danger="state == 'refusee'"
+                                   decoration-warning="state in ['validation_solde', 'validation_n1', 'validation_rh', 'validation_md']"
+                                   decoration-info="state == 'expression_besoin'"/>
+                        </div>
+                    </div>
+
+                    <div class="ar_request_quickfacts">
+                        <div class="ar_fact">
+                            <i class="fa fa-user"/>
+                            <span>Demandeur</span>
+                            <strong><field name="demandeur_id" readonly="1" nolabel="1"/></strong>
+                        </div>
+                        <div class="ar_fact">
+                            <i class="fa fa-sitemap"/>
+                            <span>Département</span>
+                            <strong><field name="department_id" readonly="1" nolabel="1"/></strong>
+                        </div>
+                        <div class="ar_fact">
+                            <i class="fa fa-check-circle"/>
+                            <span>Manager</span>
+                            <strong><field name="manager_id" readonly="1" nolabel="1"/></strong>
+                        </div>
+                        <div class="ar_fact">
+                            <i class="fa fa-calendar"/>
+                            <span>Créée le</span>
+                            <strong><field name="date_creation" readonly="1" nolabel="1"/></strong>
+                        </div>
+                    </div>
+
+                    <div class="ar_request_layout">
+                        <group string="Informations demandeur" class="ar_request_panel">
+                            <field name="fonction"
+                                   readonly="state != 'expression_besoin'"
+                                   required="state == 'expression_besoin'"/>
+                            <field name="tel_portable"
+                                   readonly="state != 'expression_besoin'"
+                                   invisible="demande_type not in ['teletravail', 'conge', 'recuperation']"
+                                   required="demande_type in ['teletravail', 'conge']"/>
+                        </group>
+
+                        <group string="Détails de la demande"
+                               class="ar_request_panel"
+                               invisible="demande_type == 'heures_supp'">
+                            <field name="date_debut"
+                                   readonly="state != 'expression_besoin'"
+                                   invisible="demande_type == 'heures_supp'"/>
+
+                            <field name="date_fin"
+                                   readonly="state != 'expression_besoin'"
+                                   invisible="demande_type == 'heures_supp'"/>
+
+                            <field name="situation"
+                                   readonly="state != 'expression_besoin'"
+                                   invisible="demande_type != 'conge'"
+                                   required="demande_type == 'conge'"/>
+
+                            <field name="autre_motif"
+                                   invisible="demande_type != 'conge' or situation != 'autres'"
+                                   required="situation == 'autres'"
+                                   readonly="state != 'expression_besoin'"/>
+
+                            <field name="piece_jointe"
+                                   filename="piece_jointe_filename"
+                                   invisible="demande_type != 'conge'"
+                                   required="demande_type == 'conge' and situation in ['mariage', 'naissance', 'deces']"
+                                   readonly="state != 'expression_besoin'"/>
+                        </group>
+                    </div>
+
+                    <group string="Commentaire et suivi" class="ar_request_panel ar_request_followup">
+                        <field name="commentaire"
+                               readonly="state != 'expression_besoin'"
+                               required="state == 'expression_besoin'"
+                               placeholder="Ajoutez les informations utiles à la validation de la demande."/>
+                        <field name="compteur_conge"
+                               invisible="demande_type != 'conge' or (not is_rh_user and not compteur_conge)"
+                               readonly="not is_rh_user or state != 'validation_solde'"
+                               required="demande_type == 'conge' and state == 'validation_solde'"/>
+                        <field name="motif_refus"
+                               invisible="not can_refuse and not motif_refus"
+                               readonly="not can_refuse"/>
+                    </group>
+
+                    <!-- ========================= -->
+                    <!-- TABLEAU HEURES SUPP -->
+                    <!-- ========================= -->
+                    <group invisible="demande_type != 'heures_supp'" class="ar_request_panel ar_request_lines" col="4">
+                        <separator string="Heures supplémentaires" colspan="4"/>
+
+                        <field name="heures_supp_line_ids"
+                               nolabel="1"
+                               colspan="4"
+                               readonly="not can_edit_hs_lines">
+                            <list editable="bottom">
+                                <field name="matricule" string="Matricule" required="1"/>
+                                <field name="employee_id" string="Nom &amp; Prénom" required="1"/>
+                                <field name="date_debut" string="Date début" required="1"/>
+                                <field name="date_fin" string="Date fin" required="1"/>
+                                <field name="commentaire" string="Commentaire"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- SEARCH VIEW -->
+    <!-- ========================= -->
+    <record id="view_ar_demande_conge_search" model="ir.ui.view">
+        <field name="name">ar.demande.conge.search</field>
+        <field name="model">ar.demande.conge</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="demandeur_id"/>
+                <field name="manager_id"/>
+                <field name="department_id"/>
+                <field name="demande_type"/>
+                <field name="state"/>
+
+                <filter string="Expression de besoin" name="filter_expression_besoin" domain="[('state','=','expression_besoin')]"/>
+                <filter string="Validation du solde" name="filter_validation_solde" domain="[('state','=','validation_solde')]"/>
+                <filter string="Validation N+1" name="filter_validation_n1" domain="[('state','=','validation_n1')]"/>
+                <filter string="Validation RH" name="filter_validation_rh" domain="[('state','=','validation_rh')]"/>
+                <filter string="Validation MD" name="filter_validation_md" domain="[('state','=','validation_md')]"/>
+                <filter string="Acceptée" name="filter_acceptee" domain="[('state','=','acceptee')]"/>
+                <filter string="Refusée" name="filter_refusee" domain="[('state','=','refusee')]"/>
+
+                <group>
+                    <filter string="Type de demande" name="group_by_type" context="{'group_by':'demande_type'}"/>
+                    <filter string="État" name="group_by_state" context="{'group_by':'state'}"/>
+                    <filter string="Département" name="group_by_department" context="{'group_by':'department_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- ACTIONS DEMANDES -->
+    <!-- ========================= -->
+    <record id="action_demandes_global" model="ir.actions.act_window">
+        <field name="name">Demandes</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_ar_demande_conge_search"/>
+        <field name="domain">[('state','not in',('acceptee','refusee'))]</field>
+    </record>
+
+    <record id="action_demande_conge" model="ir.actions.act_window">
+        <field name="name">Demande de congé</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_ar_demande_conge_form"/>
+        <field name="target">current</field>
+        <field name="context">{'default_demande_type': 'conge', 'form_view_initial_mode': 'edit'}</field>
+    </record>
+
+    <record id="action_demande_heures_supp" model="ir.actions.act_window">
+        <field name="name">Demande des heures supplémentaires</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_ar_demande_conge_form"/>
+        <field name="target">current</field>
+        <field name="context">{'default_demande_type': 'heures_supp', 'form_view_initial_mode': 'edit'}</field>
+    </record>
+
+    <record id="action_demande_teletravail" model="ir.actions.act_window">
+        <field name="name">Demande de télétravail</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_ar_demande_conge_form"/>
+        <field name="target">current</field>
+        <field name="context">{'default_demande_type': 'teletravail', 'form_view_initial_mode': 'edit'}</field>
+    </record>
+
+    <record id="action_demande_recuperation" model="ir.actions.act_window">
+        <field name="name">Demande d'ajout de récupération</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_ar_demande_conge_form"/>
+        <field name="target">current</field>
+        <field name="context">{'default_demande_type': 'recuperation', 'form_view_initial_mode': 'edit'}</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- ACTION CALENDAR -->
+    <!-- ========================= -->
+    <record id="action_demande_conge_calendar" model="ir.actions.act_window">
+        <field name="name">Calendrier</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="view_id" ref="view_ar_demande_conge_calendar"/>
+        <field name="search_view_id" ref="view_ar_demande_conge_search"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- ACTIONS ARCHIVES -->
+    <!-- ========================= -->
+    <record id="action_archive_acceptee" model="ir.actions.act_window">
+        <field name="name">Demandes acceptées</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_ar_demande_conge_search"/>
+        <field name="domain">[('state','=','acceptee')]</field>
+    </record>
+
+    <record id="action_archive_refusee" model="ir.actions.act_window">
+        <field name="name">Demandes refusées</field>
+        <field name="res_model">ar.demande.conge</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_ar_demande_conge_search"/>
+        <field name="domain">[('state','=','refusee')]</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- ACTION DOCUMENTATION -->
+    <!-- ========================= -->
+    <record id="action_ar_demande_conge_documentation" model="ir.actions.act_window">
+        <field name="name">Documentation</field>
+        <field name="res_model">ar.demande.conge.documentation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

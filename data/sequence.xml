@@ -1,0 +1,7 @@
+<odoo>
+    <record id="seq_ar_demande_conge" model="ir.sequence">
+        <field name="name">Demande Congé</field>
+        <field name="code">ar.demande.conge</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

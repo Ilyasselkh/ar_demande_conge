@@ -1,0 +1,33 @@
+<odoo>
+    <!-- Utilisateur : voit seulement ses demandes -->
+    <record id="rule_ar_demande_conge_demandeur" model="ir.rule">
+        <field name="name">Demande Congé - Demandeur</field>
+        <field name="model_id" ref="model_ar_demande_conge"/>
+        <field name="domain_force">[('demandeur_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('ar_demande_conge.group_demande_conge_user'))]"/>
+    </record>
+
+    <!-- N+1 : voit les demandes où il est manager -->
+    <record id="rule_ar_demande_conge_manager" model="ir.rule">
+        <field name="name">Demande Congé - Manager N+1</field>
+        <field name="model_id" ref="model_ar_demande_conge"/>
+        <field name="domain_force">[('manager_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('ar_demande_conge.group_demande_conge_validateur_n1'))]"/>
+    </record>
+
+    <!-- RH : voit tout -->
+    <record id="rule_ar_demande_conge_rh" model="ir.rule">
+        <field name="name">Demande Congé - RH voit tout</field>
+        <field name="model_id" ref="model_ar_demande_conge"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('ar_demande_conge.group_demande_conge_validateur_rh'))]"/>
+    </record>
+
+    <!-- MD : voit tout -->
+    <record id="rule_ar_demande_conge_md" model="ir.rule">
+        <field name="name">Demande Congé - MD voit tout</field>
+        <field name="model_id" ref="model_ar_demande_conge"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('ar_demande_conge.group_demande_conge_validateur_md'))]"/>
+    </record>
+</odoo>

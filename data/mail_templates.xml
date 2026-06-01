@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <!-- ===================================================== -->
+        <!-- VALIDATION Solde -->
+        <!-- ===================================================== -->
+
+        <record id="mail_template_demande_conge_to_solde" model="mail.template">
+    <field name="name">Demande Congé - Validation du solde</field>
+    <field name="model_id" ref="model_ar_demande_conge"/>
+    <field name="subject">[Demande Congé] {{ object.name }} - Validation du solde requise</field>
+    <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+    <field name="email_to"></field>
+    <field name="body_html" type="html">
+        <div>
+            <p>Bonjour,</p>
+            <p>Une demande de congé nécessite votre validation du solde.</p>
+
+            <p><b>Référence :</b> <t t-out="object.name"/></p>
+            <p><b>Demandeur :</b> <t t-out="object.demandeur_id.name"/></p>
+            <p><b>Département :</b> <t t-out="object.department_id.name or ''"/></p>
+            <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+            <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+            <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+
+            <t t-if="object.situation">
+                <p><b>Motif :</b> <t t-out="dict(object._fields['situation'].selection).get(object.situation)"/></p>
+            </t>
+
+            <t t-if="object.commentaire">
+                <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+            </t>
+
+            <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+
+            <t t-set="base_url" t-value="object.get_base_url()"/>
+            <div style="margin: 16px 0px;">
+                <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                   style="background-color:#1481f4;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                    Ouvrir la demande
+                </a>
+            </div>
+        </div>
+    </field>
+</record>
+
+        <!-- ===================================================== -->
+        <!-- VALIDATION N+1 -->
+        <!-- ===================================================== -->
+        <record id="mail_template_demande_conge_to_n1" model="mail.template">
+            <field name="name">Demande RH - Validation N+1</field>
+            <field name="model_id" ref="model_ar_demande_conge"/>
+            <field name="subject">[Demande RH] {{ object.name }} - Validation N+1 requise</field>
+            <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>Une demande RH nécessite votre validation N+1.</p>
+
+                    <p><b>Référence :</b> <t t-out="object.name"/></p>
+                    <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+                    <p><b>Demandeur :</b> <t t-out="object.demandeur_id.name"/></p>
+                    <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+                    <t t-if="object.demande_type != 'heures_supp'">
+                        <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                        <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+                    </t>
+
+                    <t t-if="object.demande_type == 'heures_supp' and object.heures_supp_line_ids">
+                        <p><b>Nombre de lignes heures supp :</b> <t t-out="len(object.heures_supp_line_ids)"/></p>
+                        <br/>
+                        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom &amp; Prénom</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.heures_supp_line_ids" t-as="line">
+                                    <tr>
+                                    <td><t t-out="line.matricule or ''"/></td>
+                                        <td><t t-out="line.employee_id.name or ''"/></td>
+                                        <td><span t-field="line.date_debut"/></td>
+                                        <td><span t-field="line.date_fin"/></td>
+                                        <td><t t-out="line.commentaire or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="object.situation">
+                        <p><b>Situation :</b> <t t-out="dict(object._fields['situation'].selection).get(object.situation)"/></p>
+                    </t>
+
+                    <t t-if="object.commentaire">
+                        <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+                    </t>
+
+                    <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                           style="background-color:#1481f4;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Ouvrir la demande
+                        </a>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+        <!-- ===================================================== -->
+        <!-- VALIDATION RH -->
+        <!-- ===================================================== -->
+        <record id="mail_template_demande_conge_to_rh" model="mail.template">
+            <field name="name">Demande RH - Validation RH</field>
+            <field name="model_id" ref="model_ar_demande_conge"/>
+            <field name="subject">[Demande RH] {{ object.name }} - Validation RH requise</field>
+            <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>Une demande RH nécessite votre validation.</p>
+
+                    <p><b>Référence :</b> <t t-out="object.name"/></p>
+                    <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+                    <p><b>Demandeur :</b> <t t-out="object.demandeur_id.name"/></p>
+                    <p><b>Département :</b> <t t-out="object.department_id.name or ''"/></p>
+                    <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+                    <t t-if="object.demande_type != 'heures_supp'">
+                        <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                        <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+                    </t>
+
+                    <t t-if="object.demande_type == 'heures_supp' and object.heures_supp_line_ids">
+                        <p><b>Nombre de lignes heures supp :</b> <t t-out="len(object.heures_supp_line_ids)"/></p>
+                        <br/>
+                        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom &amp; Prénom</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.heures_supp_line_ids" t-as="line">
+                                    <tr>
+                                    <td><t t-out="line.matricule or ''"/></td>
+                                        <td><t t-out="line.employee_id.name or ''"/></td>
+                                        <td><span t-field="line.date_debut"/></td>
+                                        <td><span t-field="line.date_fin"/></td>
+                                        <td><t t-out="line.commentaire or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="object.situation">
+                        <p><b>Situation :</b> <t t-out="dict(object._fields['situation'].selection).get(object.situation)"/></p>
+                    </t>
+
+                    <t t-if="object.commentaire">
+                        <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+                    </t>
+
+                    <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                           style="background-color:#1481f4;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Ouvrir la demande
+                        </a>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+        <!-- ===================================================== -->
+        <!-- VALIDATION MD -->
+        <!-- ===================================================== -->
+        <record id="mail_template_demande_conge_to_md" model="mail.template">
+            <field name="name">Demande RH - Validation MD</field>
+            <field name="model_id" ref="model_ar_demande_conge"/>
+            <field name="subject">[Demande RH] {{ object.name }} - Validation MD requise</field>
+            <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>Une demande RH nécessite votre validation finale.</p>
+
+                    <p><b>Référence :</b> <t t-out="object.name"/></p>
+                    <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+                    <p><b>Demandeur :</b> <t t-out="object.demandeur_id.name"/></p>
+                    <p><b>Département :</b> <t t-out="object.department_id.name or ''"/></p>
+                    <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+                    <t t-if="object.demande_type != 'heures_supp'">
+                        <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                        <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+                    </t>
+
+                    <t t-if="object.demande_type == 'heures_supp' and object.heures_supp_line_ids">
+                        <p><b>Nombre de lignes heures supp :</b> <t t-out="len(object.heures_supp_line_ids)"/></p>
+                        <br/>
+                        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom &amp; Prénom</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.heures_supp_line_ids" t-as="line">
+                                    <tr>
+                                    <td><t t-out="line.matricule or ''"/></td>
+                                        <td><t t-out="line.employee_id.name or ''"/></td>
+                                        <td><span t-field="line.date_debut"/></td>
+                                        <td><span t-field="line.date_fin"/></td>
+                                        <td><t t-out="line.commentaire or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="object.situation">
+                        <p><b>Situation :</b> <t t-out="dict(object._fields['situation'].selection).get(object.situation)"/></p>
+                    </t>
+
+                    <t t-if="object.commentaire">
+                        <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+                    </t>
+
+                    <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                           style="background-color:#1481f4;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Ouvrir la demande
+                        </a>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+        <!-- ===================================================== -->
+        <!-- DEMANDE ACCEPTEE -->
+        <!-- ===================================================== -->
+        <record id="mail_template_demande_conge_accepted_to_demandeur" model="mail.template">
+            <field name="name">Demande RH - Demande acceptée</field>
+            <field name="model_id" ref="model_ar_demande_conge"/>
+            <field name="subject">[Demande RH] {{ object.name }} - Demande acceptée</field>
+            <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>Votre demande <b><t t-out="object.name"/></b> a été <b>acceptée</b>.</p>
+
+                    <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+                    <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+                    <t t-if="object.demande_type != 'heures_supp'">
+                        <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                        <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+                    </t>
+
+                    <t t-if="object.demande_type == 'heures_supp' and object.heures_supp_line_ids">
+                        <p><b>Nombre de lignes heures supp :</b> <t t-out="len(object.heures_supp_line_ids)"/></p>
+                        <br/>
+                        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom &amp; Prénom</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.heures_supp_line_ids" t-as="line">
+                                    <tr>
+                                    <td><t t-out="line.matricule or ''"/></td>
+                                        <td><t t-out="line.employee_id.name or ''"/></td>
+                                        <td><span t-field="line.date_debut"/></td>
+                                        <td><span t-field="line.date_fin"/></td>
+                                        <td><t t-out="line.commentaire or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="object.commentaire">
+                        <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+                    </t>
+
+                    <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                           style="background-color:#16a34a;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Voir la demande
+                        </a>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+        <!-- ===================================================== -->
+        <!-- DEMANDE REFUSEE -->
+        <!-- ===================================================== -->
+        <record id="mail_template_demande_conge_refused_to_demandeur" model="mail.template">
+            <field name="name">Demande RH - Demande refusée</field>
+            <field name="model_id" ref="model_ar_demande_conge"/>
+            <field name="subject">[Demande RH] {{ object.name }} - Demande refusée</field>
+            <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>Votre demande <b><t t-out="object.name"/></b> a été <b>refusée</b>.</p>
+
+                    <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+                    <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+                    <t t-if="object.demande_type != 'heures_supp'">
+                        <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                        <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+                    </t>
+
+                    <t t-if="object.demande_type == 'heures_supp' and object.heures_supp_line_ids">
+                        <p><b>Nombre de lignes heures supp :</b> <t t-out="len(object.heures_supp_line_ids)"/></p>
+                        <br/>
+                        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom &amp; Prénom</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.heures_supp_line_ids" t-as="line">
+                                    <tr>
+                                    <td><t t-out="line.matricule or ''"/></td>
+                                        <td><t t-out="line.employee_id.name or ''"/></td>
+                                        <td><span t-field="line.date_debut"/></td>
+                                        <td><span t-field="line.date_fin"/></td>
+                                        <td><t t-out="line.commentaire or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="object.commentaire">
+                        <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+                    </t>
+                    <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                           style="background-color:#dc2626;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Voir la demande
+                        </a>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+        <!-- ===================================================== -->
+        <!-- DEMANDE RETOURNEE EN MODIFICATION -->
+        <!-- ===================================================== -->
+        <record id="mail_template_demande_conge_back_to_demandeur_for_modification" model="mail.template">
+            <field name="name">Demande RH - Retour pour modification</field>
+            <field name="model_id" ref="model_ar_demande_conge"/>
+            <field name="subject">[Demande RH] {{ object.name }} - Demande à modifier</field>
+            <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>Votre demande <b><t t-out="object.name"/></b> a été remise à l’état <b>Expression de besoin</b> pour modification.</p>
+
+                    <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+                    <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+                    <t t-if="object.demande_type != 'heures_supp'">
+                        <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                        <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+                    </t>
+
+                    <t t-if="object.demande_type == 'heures_supp' and object.heures_supp_line_ids">
+                        <p><b>Nombre de lignes heures supp :</b> <t t-out="len(object.heures_supp_line_ids)"/></p>
+                        <br/>
+                        <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Matricule</th>
+                                    <th>Nom &amp; Prénom</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.heures_supp_line_ids" t-as="line">
+                                    <tr>
+                                    <td><t t-out="line.matricule or ''"/></td>
+                                        <td><t t-out="line.employee_id.name or ''"/></td>
+                                        <td><span t-field="line.date_debut"/></td>
+                                        <td><span t-field="line.date_fin"/></td>
+                                        <td><t t-out="line.commentaire or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="object.commentaire">
+                        <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+                    </t>
+
+                    <t t-if="object.compteur_conge">
+    <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+</t>
+
+<t t-if="object.motif_refus">
+    <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+</t>
+
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                           style="background-color:#f59e0b;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Modifier la demande
+                        </a>
+                    </div>
+                </div>
+            </field>
+        </record>
+
+
+
+        <record id="mail_template_demande_conge_accepted_to_manager_n1" model="mail.template">
+    <field name="name">Demande RH - Demande acceptée - Manager N+1</field>
+    <field name="model_id" ref="model_ar_demande_conge"/>
+    <field name="subject">[Demande RH] {{ object.name }} - Demande acceptée</field>
+    <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+    <field name="email_to"></field>
+    <field name="body_html" type="html">
+        <div>
+            <p>Bonjour,</p>
+            <p>La demande <b><t t-out="object.name"/></b> de votre collaborateur <b><t t-out="object.demandeur_id.name"/></b> a été <b>acceptée</b>.</p>
+
+            <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+            <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+            <t t-if="object.demande_type != 'heures_supp'">
+                <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+            </t>
+
+            <t t-if="object.commentaire">
+                <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+            </t>
+
+            <t t-if="object.compteur_conge">
+                <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+            </t>
+
+            <t t-if="object.motif_refus">
+                <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+            </t>
+
+            <t t-set="base_url" t-value="object.get_base_url()"/>
+            <div style="margin: 16px 0px;">
+                <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                   style="background-color:#16a34a;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                    Voir la demande
+                </a>
+            </div>
+        </div>
+    </field>
+</record>
+
+
+
+
+<record id="mail_template_demande_conge_refused_to_manager_n1" model="mail.template">
+    <field name="name">Demande RH - Demande refusée - Manager N+1</field>
+    <field name="model_id" ref="model_ar_demande_conge"/>
+    <field name="subject">[Demande RH] {{ object.name }} - Demande refusée</field>
+    <field name="email_from">Demande RH &lt;AR-ARMaroc@araymond.com&gt;</field>
+    <field name="email_to"></field>
+    <field name="body_html" type="html">
+        <div>
+            <p>Bonjour,</p>
+            <p>La demande <b><t t-out="object.name"/></b> de votre collaborateur <b><t t-out="object.demandeur_id.name"/></b> a été <b>refusée</b>.</p>
+
+            <p><b>Type de demande :</b> <t t-out="dict(object._fields['demande_type'].selection).get(object.demande_type)"/></p>
+            <p><b>Fonction :</b> <t t-out="object.fonction or ''"/></p>
+
+            <t t-if="object.demande_type != 'heures_supp'">
+                <p><b>Date début :</b> <span t-field="object.date_debut"/></p>
+                <p><b>Date fin :</b> <span t-field="object.date_fin"/></p>
+            </t>
+
+            <t t-if="object.commentaire">
+                <p><b>Commentaire général :</b> <t t-out="object.commentaire"/></p>
+            </t>
+
+            <t t-if="object.compteur_conge">
+                <p><b>Compteur de congé :</b> <t t-out="object.compteur_conge"/></p>
+            </t>
+
+            <t t-if="object.motif_refus">
+                <p><b>Motif de refus :</b> <t t-out="object.motif_refus"/></p>
+            </t>
+
+            <t t-set="base_url" t-value="object.get_base_url()"/>
+            <div style="margin: 16px 0px;">
+                <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.demande.conge&amp;view_type=form"
+                   style="background-color:#dc2626;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                    Voir la demande
+                </a>
+            </div>
+        </div>
+    </field>
+</record>
+
+    </data>
+</odoo>

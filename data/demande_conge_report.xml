@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_demande_conge_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+
+                    <div class="page">
+                        <div class="oe_structure"/>
+
+                        <h2 class="mt-12">
+                            <div class="text-center">
+
+                                <t t-if="doc.demande_type == 'heures_supp'">
+                                    <strong>DEMANDE DES HEURES SUPPLÉMENTAIRES</strong>
+                                </t>
+
+                                <t t-if="doc.demande_type == 'teletravail'">
+                                    <strong>DEMANDE DE TÉLÉTRAVAIL</strong>
+                                </t>
+
+                                <t t-if="doc.demande_type == 'recuperation'">
+                                    <strong>DEMANDE D'AJOUT DE RÉCUPÉRATION</strong>
+                                </t>
+
+                                <t t-if="doc.demande_type == 'conge'">
+                                    <strong>DEMANDE DE CONGÉ</strong>
+                                </t>
+
+                            </div>
+                        </h2>
+
+                        <h2 class="mt-4">
+                            Référence :
+                            <span t-field="doc.name"/>
+                        </h2>
+
+                        <!-- Informations générales -->
+                        <div>
+                            <strong style="font-size:1.2em; font-weight:900;">Date de création :</strong>
+                            <span t-field="doc.date_creation" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <div>
+                            <strong style="font-size:1.2em; font-weight:900;">Demandeur :</strong>
+                            <span t-field="doc.demandeur_id.name" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <div>
+                            <strong style="font-size:1.2em; font-weight:900;">Département :</strong>
+                            <span t-field="doc.department_id.name" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <div>
+                            <strong style="font-size:1.2em; font-weight:900;">Manager N+1 :</strong>
+                            <span t-field="doc.manager_id.name" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <div style="border-top:1px solid #dcdcdc; margin:10px 0 12px 0;"></div>
+
+                        <div t-if="doc.fonction">
+                            <strong style="font-size:1.2em; font-weight:900;">Fonction :</strong>
+                            <span t-field="doc.fonction" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        
+                        <t t-if="doc.demande_type != 'heures_supp'">
+                            <div>
+                                <strong style="font-size:1.2em; font-weight:900;">Date de début :</strong>
+                                <span t-field="doc.date_debut" style="color:#0468af; font-weight:600;"/>
+                            </div>
+
+                            <div>
+                                <strong style="font-size:1.2em; font-weight:900;">Date de fin :</strong>
+                                <span t-field="doc.date_fin" style="color:#0468af; font-weight:600;"/>
+                            </div>
+                        </t>
+
+                        <div t-if="doc.tel_portable">
+                            <strong style="font-size:1.2em; font-weight:900;">Tél. portable :</strong>
+                            <span t-field="doc.tel_portable" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <div style="border-top:1px solid #dcdcdc; margin:10px 0 12px 0;"></div>
+
+                        <div>
+                            <strong style="font-size:1.2em; font-weight:900;">État :</strong>
+                            <span t-field="doc.state" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <t t-if="doc.demande_type == 'conge'">
+                            <div t-if="doc.situation">
+                                <strong style="font-size:1.2em; font-weight:900;">Motifs :</strong>
+                                <span t-field="doc.situation" style="color:#0468af; font-weight:600;"/>
+                            </div>
+
+                            <div t-if="doc.situation == 'autres' and doc.autre_motif">
+                                <strong style="font-size:1.2em; font-weight:900;">Autre motif :</strong>
+                                <span t-field="doc.autre_motif" style="color:#0468af; font-weight:600;"/>
+                            </div>
+                        </t>
+
+                        <div t-if="doc.commentaire">
+                            <strong style="font-size:1.2em; font-weight:900;">Commentaire :</strong>
+                            <span t-field="doc.commentaire" style="color:#0468af; font-weight:600;"/>
+                        </div>
+
+                        <div t-if="doc.compteur_conge">
+    <strong style="font-size:1.2em; font-weight:900;">Compteur de congé :</strong>
+    <span t-field="doc.compteur_conge" style="color:#0468af; font-weight:600;"/>
+</div>
+
+<div t-if="doc.motif_refus">
+    <strong style="font-size:1.2em; font-weight:900;">Motif de refus :</strong>
+    <span t-field="doc.motif_refus" style="color:#0468af; font-weight:600;"/>
+</div>
+
+                        <!-- Tableau heures supp -->
+                        <t t-if="doc.demande_type == 'heures_supp' and doc.heures_supp_line_ids">
+                            <div style="border-top:1px solid #dcdcdc; margin:10px 0 12px 0;"></div>
+
+                            <h2 class="mt-4">Liste des heures supplémentaires :</h2>
+
+                            <table class="table table-sm o_main_table mt-4">
+                                <thead style="display: table-row-group">
+                                    <tr>
+    <th class="text-center" style="font-size:1.1em;font-weight:900;">Matricule</th>
+    <th class="text-center" style="font-size:1.1em;font-weight:900;">Nom &amp; Prénom</th>
+    <th class="text-center" style="font-size:1.1em;font-weight:900;">Date début</th>
+    <th class="text-center" style="font-size:1.1em;font-weight:900;">Date fin</th>
+    <th class="text-center" style="font-size:1.1em;font-weight:900;">Commentaire</th>
+</tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.heures_supp_line_ids" t-as="line">
+                                        <tr>
+    <td class="text-center">
+        <span t-field="line.matricule"/>
+    </td>
+    <td class="text-center">
+        <span t-field="line.employee_id"/>
+    </td>
+    <td class="text-center">
+        <span t-field="line.date_debut"/>
+    </td>
+    <td class="text-center">
+        <span t-field="line.date_fin"/>
+    </td>
+    <td class="text-center">
+        <t t-if="line.commentaire">
+            <span t-field="line.commentaire"/>
+        </t>
+        <t t-else="">-</t>
+    </td>
+</tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <div style="border-top:1px solid #dcdcdc; margin:10px 0 12px 0;"></div>
+
+                        <h2 class="mt-4">Signataires :</h2>
+
+                        <table class="table table-sm o_main_table mt-4">
+                            <thead style="display: table-row-group">
+                                <tr>
+                                    <th class="text-center" style="font-size:1.1em;font-weight:900;">Signataire</th>
+                                    <th class="text-center" style="font-size:1.1em;font-weight:900;">Étape</th>
+                                    <th class="text-center" style="font-size:1.1em;font-weight:900;">Statut</th>
+                                    <th class="text-center" style="font-size:1.1em;font-weight:900;">Date validation</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <!-- Validation solde -->
+                                <tr t-if="doc.demande_type == 'conge'">
+    <td class="text-center">
+        <t t-if="doc.validateur_rh_id">
+            <span t-field="doc.validateur_rh_id.name"/>
+        </t>
+        <t t-elif="doc.demandeur_id and doc.demandeur_id.user_id and doc.demandeur_id.user_id.has_group('ar_demande_conge.group_demande_conge_validateur_rh')">
+            <span t-field="doc.demandeur_id.name"/>
+        </t>
+        <t t-else="">-</t>
+    </td>
+
+    <td class="text-center">Validation du solde</td>
+
+    <td class="text-center">
+        <t t-if="doc.state == 'expression_besoin'">
+            <span style="color:red;font-weight:900;">NOK</span>
+        </t>
+        <t t-elif="doc.state == 'validation_solde'">
+            <span style="color:#d98c00;font-weight:900;">En attente</span>
+        </t>
+        <t t-elif="doc.state in ['validation_n1', 'acceptee'] and doc.date_validation_solde">
+            <span style="color:green;font-weight:900;">OK</span>
+        </t>
+        <t t-elif="doc.state == 'refusee'">
+            <span style="color:red;font-weight:900;">Refusée</span>
+        </t>
+        <t t-else="">
+            <span style="color:red;font-weight:900;">NOK</span>
+        </t>
+    </td>
+
+    <td class="text-center">
+        <t t-if="doc.date_validation_solde">
+            <span t-field="doc.date_validation_solde"/>
+        </t>
+        <t t-else="">-</t>
+    </td>
+</tr>
+
+                                <!-- N+1 -->
+                                <tr>
+                                    <td class="text-center">
+                                        <t t-if="doc.manager_id">
+                                            <span t-field="doc.manager_id.name"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+
+                                    <td class="text-center">Validation N+1</td>
+
+                                    <td class="text-center">
+
+                                        <!-- Cas spécial demande congé : RH avant N+1 -->
+                                        <t t-if="doc.demande_type == 'conge'">
+                                            <t t-if="doc.state in ['expression_besoin', 'validation_solde']">
+                                                <span style="color:red;font-weight:900;">NOK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'validation_n1'">
+                                                <span style="color:#d98c00;font-weight:900;">En attente</span>
+                                            </t>
+                                            <t t-elif="doc.state in ['acceptee'] and doc.date_validation_n1">
+                                                <span style="color:green;font-weight:900;">OK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'refusee'">
+                                                <span style="color:red;font-weight:900;">Refusée</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span style="color:red;font-weight:900;">NOK</span>
+                                            </t>
+                                        </t>
+
+                                        <!-- Cas standard : N+1 avant RH -->
+                                        <t t-if="doc.demande_type != 'conge'">
+                                            <t t-if="doc.state == 'expression_besoin'">
+                                                <span style="color:red;font-weight:900;">NOK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'validation_n1'">
+                                                <span style="color:#d98c00;font-weight:900;">En attente</span>
+                                            </t>
+                                            <t t-elif="doc.state in ['validation_rh', 'validation_md', 'acceptee']">
+                                                <span style="color:green;font-weight:900;">OK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'refusee'">
+                                                <span style="color:red;font-weight:900;">Refusée</span>
+                                            </t>
+                                        </t>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <t t-if="doc.date_validation_n1">
+                                            <span t-field="doc.date_validation_n1"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+
+                                <!-- RH -->
+                                <tr t-if="doc.demande_type != 'conge'">
+                                    <td class="text-center">
+                                        <t t-if="doc.validateur_rh_id">
+                                            <span t-field="doc.validateur_rh_id.name"/>
+                                        </t>
+                                        <t t-elif="doc.demandeur_id and doc.demandeur_id.user_id and doc.demandeur_id.user_id.has_group('ar_demande_conge.group_demande_conge_validateur_rh')">
+                                            <span t-field="doc.demandeur_id.name"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+
+                                    <td class="text-center">Validation RH</td>
+
+                                    <td class="text-center">
+
+                                        <!-- Cas spécial demande congé : RH avant N+1 -->
+                                        <t t-if="doc.demande_type == 'conge'">
+                                            <t t-if="doc.state == 'expression_besoin'">
+                                                <span style="color:red;font-weight:900;">NOK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'validation_rh'">
+                                                <span style="color:#d98c00;font-weight:900;">En attente</span>
+                                            </t>
+                                            <t t-elif="doc.state in ['validation_n1', 'validation_md', 'acceptee'] and doc.date_validation_rh">
+                                                <span style="color:green;font-weight:900;">OK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'refusee'">
+                                                <span style="color:red;font-weight:900;">Refusée</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span style="color:red;font-weight:900;">NOK</span>
+                                            </t>
+                                        </t>
+
+                                        <!-- Cas standard : N+1 avant RH -->
+                                        <t t-if="doc.demande_type != 'conge'">
+                                            <t t-if="doc.state in ['expression_besoin', 'validation_n1']">
+                                                <span style="color:red;font-weight:900;">NOK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'validation_rh'">
+                                                <span style="color:#d98c00;font-weight:900;">En attente</span>
+                                            </t>
+                                            <t t-elif="doc.state in ['validation_md', 'acceptee']">
+                                                <span style="color:green;font-weight:900;">OK</span>
+                                            </t>
+                                            <t t-elif="doc.state == 'refusee'">
+                                                <span style="color:red;font-weight:900;">Refusée</span>
+                                            </t>
+                                        </t>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <t t-if="doc.date_validation_rh">
+                                            <span t-field="doc.date_validation_rh"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+
+                                <!-- MD -->
+                                <tr>
+                                    <td class="text-center">
+                                        <t t-if="doc.md_requis and doc.validateur_md_id">
+                                            <span t-field="doc.validateur_md_id.name"/>
+                                        </t>
+                                        <t t-elif="doc.md_requis and doc.demandeur_id and doc.demandeur_id.user_id and doc.demandeur_id.user_id.has_group('ar_demande_conge.group_demande_conge_validateur_md')">
+                                            <span t-field="doc.demandeur_id.name"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+
+                                    <td class="text-center">Validation MD</td>
+
+                                    <td class="text-center">
+                                        <t t-if="not doc.md_requis and doc.state in ['acceptee', 'refusee']">
+                                            <span style="color:#6b7280;font-weight:900;">Non requise</span>
+                                        </t>
+                                        <t t-elif="doc.state in ['expression_besoin', 'validation_n1', 'validation_rh']">
+                                            <span style="color:red;font-weight:900;">NOK</span>
+                                        </t>
+                                        <t t-elif="doc.state == 'validation_md'">
+                                            <span style="color:#d98c00;font-weight:900;">En attente</span>
+                                        </t>
+                                        <t t-elif="doc.md_requis and doc.state == 'acceptee'">
+                                            <span style="color:green;font-weight:900;">OK</span>
+                                        </t>
+                                        <t t-elif="doc.state == 'refusee'">
+                                            <span style="color:red;font-weight:900;">Refusée</span>
+                                        </t>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <t t-if="doc.date_validation_md">
+                                            <span t-field="doc.date_validation_md"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <t t-if="doc.state in ['acceptee', 'refusee']">
+                            <div style="border-top:1px solid #dcdcdc; margin:10px 0 12px 0;"></div>
+
+                            <h2 class="mt-4">Décision finale :</h2>
+
+                            <div t-if="doc.state == 'acceptee'">
+                                <strong style="font-size:1.2em; font-weight:900;">Statut final :</strong>
+                                <span style="color:green; font-weight:900;">Acceptée</span>
+                            </div>
+
+                            <div t-if="doc.date_acceptation">
+                                <strong style="font-size:1.2em; font-weight:900;">Date d'acceptation :</strong>
+                                <span t-field="doc.date_acceptation" style="color:#0468af; font-weight:600;"/>
+                            </div>
+
+                            <div t-if="doc.state == 'refusee'">
+                                <strong style="font-size:1.2em; font-weight:900;">Statut final :</strong>
+                                <span style="color:red; font-weight:900;">Refusée</span>
+                            </div>
+
+                            <div t-if="doc.date_refus">
+                                <strong style="font-size:1.2em; font-weight:900;">Date de refus :</strong>
+                                <span t-field="doc.date_refus" style="color:#0468af; font-weight:600;"/>
+                            </div>
+                        </t>
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_demande_conge" model="ir.actions.report">
+        <field name="name">Demande</field>
+        <field name="model">ar.demande.conge</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ar_demande_conge.report_demande_conge_template</field>
+        <field name="report_file">ar_demande_conge.report_demande_conge_template</field>
+        <field name="print_report_name">(object.demande_type == 'heures_supp' and ('Demande_Heures_Supplementaires_%s' % object.name)) or (object.demande_type == 'teletravail' and ('Demande_Teletravail_%s' % object.name)) or (object.demande_type == 'recuperation' and ('Demande_Recuperation_%s' % object.name)) or (object.demande_type == 'conge' and ('Demande_Conge_%s' % object.name)) or ('Demande_%s' % object.name)</field>
+        <field name="binding_model_id" ref="model_ar_demande_conge"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

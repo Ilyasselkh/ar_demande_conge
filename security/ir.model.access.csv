@@ -1,0 +1,18 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_ar_demande_conge_user,access.ar.demande.conge.user,model_ar_demande_conge,ar_demande_conge.group_demande_conge_user,1,1,1,0
+access_ar_demande_conge_n1,access.ar.demande.conge.n1,model_ar_demande_conge,ar_demande_conge.group_demande_conge_validateur_n1,1,1,1,1
+access_ar_demande_conge_rh,access.ar.demande.conge.rh,model_ar_demande_conge,ar_demande_conge.group_demande_conge_validateur_rh,1,1,1,0
+access_ar_demande_conge_md,access.ar.demande.conge.md,model_ar_demande_conge,ar_demande_conge.group_demande_conge_validateur_md,1,1,1,0
+
+
+access_ar_demande_conge_doc_read,ar.demande.conge.documentation read,model_ar_demande_conge_documentation,base.group_user,1,0,0,0
+access_ar_demande_conge_doc_admin,ar.demande.conge.documentation admin,model_ar_demande_conge_documentation,base.group_system,1,1,1,1
+
+access_ar_demande_conge_action_wizard_user,access.ar.demande.conge.action.wizard.user,model_ar_demande_conge_action_wizard,base.group_user,1,1,1,1
+
+
+access_ar_demande_conge_hs_line_user,access.ar.demande.conge.hs.line.user,model_ar_demande_conge_hs_line,ar_demande_conge.group_demande_conge_user,1,1,1,1
+access_ar_demande_conge_hs_line_n1,access.ar.demande.conge.hs.line.n1,model_ar_demande_conge_hs_line,ar_demande_conge.group_demande_conge_validateur_n1,1,1,1,1
+access_ar_demande_conge_hs_line_rh,access.ar.demande.conge.hs.line.rh,model_ar_demande_conge_hs_line,ar_demande_conge.group_demande_conge_validateur_rh,1,1,1,1
+access_ar_demande_conge_hs_line_md,access.ar.demande.conge.hs.line.md,model_ar_demande_conge_hs_line,ar_demande_conge.group_demande_conge_validateur_md,1,1,1,1

@@ -1,0 +1,68 @@
+<odoo>
+    <menuitem id="menu_ar_demande_conge_root"
+              name="AR Demandes RH"
+              sequence="10"
+              groups="ar_demande_conge.group_demande_conge_user,ar_demande_conge.group_demande_conge_validateur_n1,ar_demande_conge.group_demande_conge_validateur_rh,ar_demande_conge.group_demande_conge_validateur_md"/>
+
+    <menuitem id="menu_ar_demande_conge_demandes"
+              name="Demandes"
+              parent="menu_ar_demande_conge_root"
+              action="action_demandes_global"
+              sequence="10"/>
+
+      <menuitem id="menu_demande_conge_item"
+              name="Demande de congé"
+              parent="menu_ar_demande_conge_demandes"
+              action="action_demande_conge"
+              sequence="1"/>
+
+    <menuitem id="menu_demande_heures_supp"
+              name="Demande des heures supplémentaires"
+              parent="menu_ar_demande_conge_demandes"
+              action="action_demande_heures_supp"
+              sequence="2"/>
+
+    <menuitem id="menu_demande_teletravail"
+              name="Demande de télétravail"
+              parent="menu_ar_demande_conge_demandes"
+              action="action_demande_teletravail"
+              sequence="3"/>
+
+    <menuitem id="menu_demande_recuperation"
+              name="Demande d'ajout de récupération"
+              parent="menu_ar_demande_conge_demandes"
+              action="action_demande_recuperation"
+              sequence="4"/>
+
+    
+
+    <menuitem id="menu_ar_demande_conge_calendar"
+          name="Calendrier"
+          parent="menu_ar_demande_conge_root"
+          action="action_demande_conge_calendar"
+          sequence="15"/>
+
+    <menuitem id="menu_ar_demande_conge_archives"
+              name="Archives"
+              parent="menu_ar_demande_conge_root"
+              sequence="20"/>
+
+    <menuitem id="menu_archive_acceptee"
+              name="Acceptée"
+              parent="menu_ar_demande_conge_archives"
+              action="action_archive_acceptee"
+              sequence="1"/>
+
+    <menuitem id="menu_archive_refusee"
+              name="Refusée"
+              parent="menu_ar_demande_conge_archives"
+              action="action_archive_refusee"
+              sequence="2"/>
+
+    <menuitem id="menu_ar_demande_conge_documentation"
+          name="Documentation"
+          parent="menu_ar_demande_conge_root"
+          action="action_ar_demande_conge_documentation"
+          sequence="30"/>
+          
+</odoo>
