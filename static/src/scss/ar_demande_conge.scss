@@ -758,13 +758,28 @@ $ar-soft: #f4f7f8;
     .ar_request_panel > .o_inner_group,
     .ar_request_panel > .o_group,
     .ar_request_panel > div:not(.o_horizontal_separator) {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         width: 100%;
     }
 
     .ar_request_panel .o_inner_group,
     .ar_request_panel .o_group {
+        align-content: start;
+        align-items: start;
+        height: auto !important;
         width: 100% !important;
+    }
+
+    .ar_request_panel .o_inner_group > tbody,
+    .ar_request_panel .o_inner_group > tbody > tr {
+        height: auto !important;
+        vertical-align: top;
+    }
+
+    .ar_request_panel .o_inner_group > tbody > tr > td {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        vertical-align: top;
     }
 
     .ar_request_panel .o_inner_group > tbody > tr > td.o_td_label {

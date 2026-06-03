@@ -530,6 +530,10 @@ class ARDemandeConge(models.Model):
         }
         return prefixes.get(demande_type, "DMD-")
 
+    def _post_workflow_trace(self, message):
+        self.ensure_one()
+        self.message_post(body=message % self.env.user.name)
+
     def action_soumettre(self):
         for rec in self:
             if rec.state != "expression_besoin":
@@ -564,6 +568,7 @@ class ARDemandeConge(models.Model):
                 else:
                     rec.state = "validation_n1"
 
+            rec._post_workflow_trace(_("Demande soumise par %s. Demande transmise a l'etape suivante."))
             rec._send_notification_for_current_state()
 
     def _is_current_user_real_manager_n1(self):
@@ -595,6 +600,7 @@ class ARDemandeConge(models.Model):
             else:
                 rec.state = "validation_n1"
 
+            rec._post_workflow_trace(_("Validation du solde effectuee par %s."))
             rec._send_notification_for_current_state()
 
     def action_valider_n1(self):
@@ -626,6 +632,7 @@ class ARDemandeConge(models.Model):
                 else:
                     rec.state = "validation_rh"
 
+            rec._post_workflow_trace(_("Validation N+1 effectuee par %s."))
             rec._send_notification_for_current_state()
 
     def action_valider_rh(self):
@@ -643,6 +650,7 @@ class ARDemandeConge(models.Model):
             rec.state = "acceptee"
             rec.date_acceptation = fields.Datetime.now()
 
+            rec._post_workflow_trace(_("Validation RH effectuee par %s. Demande acceptee."))
             rec._send_notification_for_current_state()
 
     def action_valider_md(self):
@@ -658,6 +666,7 @@ class ARDemandeConge(models.Model):
             rec.state = "acceptee"
             rec.date_acceptation = fields.Datetime.now()
 
+            rec._post_workflow_trace(_("Validation MD effectuee par %s. Demande acceptee."))
             rec._send_notification_for_current_state()
 
     def action_envoyer_a_md(self):
@@ -676,6 +685,7 @@ class ARDemandeConge(models.Model):
             rec.md_requis = True
             rec.state = "validation_md"
 
+            rec._post_workflow_trace(_("Validation RH effectuee par %s. Demande transmise a MD."))
             rec._send_notification_for_current_state()
 
     def action_refuser(self):
@@ -711,6 +721,7 @@ class ARDemandeConge(models.Model):
             rec.state = "refusee"
             rec.date_refus = fields.Datetime.now()
 
+            rec._post_workflow_trace(_("Demande refusee par %s."))
             rec._send_notification_for_current_state()
 
     def action_demander_modification(self):
