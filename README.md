@@ -1,52 +1,136 @@
 # AR - Demande Conge
 
-Module Odoo de gestion des demandes RH: conge, teletravail, recuperation et heures supplementaires.
+Module Odoo de gestion des demandes RH : conge, teletravail, recuperation et heures supplementaires.
 
-## Objectif
+Le module centralise les demandes collaborateur, controle les champs obligatoires, gere les validations Service administratif, Manager N+1, RH et MD, puis archive les demandes acceptees ou refusees.
 
-Cette documentation explique le perimetre fonctionnel du module, les roles utilisateurs, le workflow, la configuration et les principaux objets techniques.
+## Objectif fonctionnel
 
-## Utilisateurs concernes
+Digitaliser les demandes RH courantes et assurer une validation tracable.
 
-- Collaborateur
-- Service administratif
-- Manager N+1
-- RH
-- MD
-- Administrateur Odoo
+Le module permet de :
 
-## Workflow metier
+- creer une demande RH ;
+- choisir le type de demande ;
+- renseigner les dates, motifs et commentaires ;
+- joindre une piece justificative ;
+- saisir des lignes d'heures supplementaires ;
+- valider le solde par le service administratif ;
+- valider par Manager N+1 ;
+- valider par RH ;
+- envoyer vers MD lorsque requis ;
+- accepter ou refuser avec motif ;
+- notifier les acteurs par email ;
+- imprimer un rapport de demande.
 
-1. Expression de besoin
-2. Service administratif
-3. Validation N+1
-4. Validation RH
-5. Validation MD si necessaire
-6. Acceptee
-7. Refusee
+## Roles fonctionnels
 
-## Fonctionnement operationnel
+### Demandeur
 
-- Choisir le type de demande.
-- Renseigner dates, motif et commentaire.
-- Ajouter piece jointe ou lignes heures supplementaires.
-- Soumettre au workflow.
-- Valider chaque etape.
-- Consulter historique dans le chatter.
+Le demandeur initie la demande.
 
-## Configuration recommandee
+Il peut :
 
-- Verifier employes, managers et departements.
-- Configurer groupes RH et MD.
-- Verifier sequence, templates mail et rapport.
-- Adapter les regles par type de demande.
+- creer une demande ;
+- renseigner le type, les dates et le commentaire ;
+- ajouter une piece jointe ;
+- saisir les lignes d'heures supplementaires ;
+- soumettre la demande ;
+- consulter son historique.
 
-## Dependances Odoo
+### Service administratif
 
-- `base`
-- `mail`
-- `hr`
-- `website`
+Le service administratif intervient pour la validation du solde lorsque le flux le demande.
+
+Il verifie les donnees avant transmission au Manager N+1.
+
+### Manager N+1
+
+Le Manager N+1 valide la demande du collaborateur.
+
+Condition importante : l'utilisateur doit etre le manager reel du demandeur.
+
+### RH
+
+RH valide la demande apres le Manager N+1 et peut refuser si les conditions RH ne sont pas respectees.
+
+### MD
+
+MD valide les demandes qui necessitent une validation direction.
+
+## Types de demande
+
+Le champ `Type de demande` peut prendre les valeurs suivantes :
+
+- demande des heures supplementaires ;
+- demande de teletravail ;
+- demande d'ajout de recuperation ;
+- demande de conge.
+
+## Etats du workflow
+
+Les etats principaux sont :
+
+- `Expression de besoin`
+- `Service administratif`
+- `Validation N+1`
+- `Validation RH`
+- `Validation MD`
+- `Acceptee`
+- `Refusee`
+
+## Flux standard
+
+1. `Expression de besoin`
+2. `Service administratif`
+3. `Validation N+1`
+4. `Validation RH`
+5. `Validation MD` si requis
+6. `Acceptee`
+
+Un refus est possible aux etapes de validation autorisees.
+
+## Heures supplementaires
+
+Pour les demandes d'heures supplementaires, le demandeur renseigne des lignes dediees.
+
+Les lignes permettent de detailler les periodes et les informations necessaires au controle RH.
+
+## Motifs et pieces jointes
+
+Le module permet de renseigner :
+
+- situation ;
+- autre motif ;
+- commentaire general ;
+- piece jointe.
+
+Pour les motifs `Autres`, le commentaire doit permettre au validateur de comprendre la demande.
+
+## Notifications
+
+Les templates email couvrent les transitions vers :
+
+- service administratif ;
+- Manager N+1 ;
+- RH ;
+- MD ;
+- demandeur apres acceptation ;
+- demandeur apres refus ;
+- demandeur apres demande de modification ;
+- Manager N+1 selon acceptation ou refus.
+
+Fichier principal :
+
+- `data/mail_templates.xml`
+
+## Rapports
+
+Le module fournit un rapport de demande RH.
+
+Fichier principal :
+
+- `data/demande_conge_report.xml`
 
 ## Modeles principaux
 
@@ -55,43 +139,41 @@ Cette documentation explique le perimetre fonctionnel du module, les roles utili
 - `ar.demande.conge.documentation`
 - `ar.demande.conge.action.wizard`
 
-## Structure importante du module
+## Structure du module
 
-- `security/ir.model.access.csv`
-- `security/record_rules.xml`
 - `security/security.xml`
-- `data/demande_conge_report.xml`
-- `data/mail_templates.xml`
+- `security/record_rules.xml`
+- `security/ir.model.access.csv`
 - `data/sequence.xml`
-- `views/ar_demande_conge_documentation_views.xml`
-- `views/ar_demande_conge_menu.xml`
+- `data/mail_templates.xml`
+- `data/demande_conge_report.xml`
 - `views/ar_demande_conge_views.xml`
-- `wizard/__init__.py`
+- `views/ar_demande_conge_menu.xml`
+- `views/ar_demande_conge_documentation_views.xml`
 - `wizard/ar_demande_conge_modify_wizard.py`
-- `models/__init__.py`
 - `models/ar_demande_conge.py`
 - `models/ar_demande_conge_documentation.py`
-
-## Securite
-
-Les droits sont geres par les fichiers du dossier `security`. Il faut verifier les groupes, les regles enregistrement et les acces CSV apres installation ou modification du module.
-
-## Notifications et suivi
-
-Les modules qui dependent de `mail` utilisent le chatter Odoo pour tracer les changements. Les templates mail presents dans le dossier `data` servent a notifier les acteurs concernes par les transitions.
+- `static/src/scss/ar_demande_conge.scss`
+- `static/src/js/demande_conge_animations.js`
 
 ## Installation
 
 1. Copier le module dans le dossier addons Odoo.
 2. Redemarrer le serveur Odoo si necessaire.
 3. Mettre a jour la liste des applications.
-4. Installer ou mettre a jour le module.
-5. Verifier les droits utilisateurs et tester un dossier de bout en bout.
+4. Installer le module.
+5. Verifier les groupes Service administratif, Manager, RH et MD.
+6. Verifier les managers dans les fiches employes.
+7. Tester chaque type de demande.
 
-## Maintenance
+## Maintenance fonctionnelle
 
-- Ajouter toute nouvelle etape a la fois dans le modele Python, les vues XML, les droits et les notifications.
-- Tester les workflows avec plusieurs roles utilisateurs.
-- Mettre a jour les rapports et templates mail quand la procedure interne change.
-- Eviter de modifier les donnees de production sans sauvegarde.
-- Documenter toute evolution fonctionnelle dans ce README.
+Lorsqu'une regle RH change, verifier aussi :
+
+- les champs obligatoires ;
+- le champ `state` ;
+- les boutons du formulaire ;
+- les assistants de validation/refus ;
+- les templates email ;
+- le rapport ;
+- ce README.
