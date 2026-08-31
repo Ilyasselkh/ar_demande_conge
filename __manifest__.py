@@ -23,6 +23,7 @@ Avec workflow :
     "license": "LGPL-3",
     "depends": [
         "base",
+        "web",
         "mail",
         "hr",
     ],
@@ -41,6 +42,7 @@ Avec workflow :
         "web.assets_backend": [
             "ar_demande_conge/static/src/scss/ar_demande_conge.scss",
             "ar_demande_conge/static/src/js/demande_conge_animations.js",
+            "ar_demande_conge/static/src/js/demande_conge_list_filters.js",
         ],
     },
     "application": True,

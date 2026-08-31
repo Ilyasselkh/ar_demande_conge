@@ -8,6 +8,7 @@
         <field name="model">ar.demande.conge</field>
         <field name="arch" type="xml">
             <list create="0"
+                  js_class="ar_demande_conge_list"
                   decoration-success="state == 'acceptee'"
                   decoration-danger="state == 'refusee'"
                   decoration-warning="state in ['validation_solde', 'validation_n1', 'validation_rh', 'validation_md']"
@@ -385,7 +386,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
-                <field name="demandeur_id"/>
+                <field name="demandeur_id" string="Personne"/>
                 <field name="manager_id"/>
                 <field name="department_id"/>
                 <field name="demande_type"/>
