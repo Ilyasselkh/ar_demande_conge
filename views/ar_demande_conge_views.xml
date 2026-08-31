@@ -183,7 +183,7 @@
                     <button name="action_soumettre"
                             string="Soumettre"
                             type="object"
-                            class="btn-primary oe_highlight"
+                            class="btn-success oe_highlight ar_submit_green"
                             invisible="state != 'expression_besoin'"/>
 
                     <button name="action_open_validate_solde_wizard"
@@ -259,11 +259,6 @@
                             </h1>
                             <div class="ar_request_subtitle">
                                 <field name="demande_type" readonly="1" force_save="1" nolabel="1"/>
-                            </div>
-                            <div class="ar_request_visual" aria-hidden="true">
-                                <span class="ar_doc_sheet"/>
-                                <span class="ar_doc_card"/>
-                                <span class="ar_doc_clip"/>
                             </div>
                         </div>
                         <div class="ar_request_status">

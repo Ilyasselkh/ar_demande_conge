@@ -419,6 +419,24 @@ $ar-soft: #f4f7f8;
         box-shadow: 0 8px 18px rgba(0, 114, 188, 0.25) !important;
     }
 
+    header .ar_submit_green,
+    .o_form_statusbar .ar_submit_green,
+    .o_form_statusbar button[name="action_soumettre"] {
+        border-color: transparent !important;
+        background-color: #15803d !important;
+        background: linear-gradient(135deg, #16a34a, #15803d) !important;
+        color: #ffffff !important;
+        box-shadow: 0 8px 18px rgba(22, 163, 74, 0.24) !important;
+    }
+
+    header .ar_submit_green:hover,
+    .o_form_statusbar .ar_submit_green:hover,
+    .o_form_statusbar button[name="action_soumettre"]:hover {
+        background-color: #15803d !important;
+        background: linear-gradient(135deg, #22c55e, #15803d) !important;
+        color: #ffffff !important;
+    }
+
     .o_form_sheet_bg > .o_form_sheet.ar_demande_conge_sheet {
         position: relative;
         padding: 30px 34px 32px !important;
@@ -457,7 +475,10 @@ $ar-soft: #f4f7f8;
         perspective: 900px;
     }
 
-    .ar_request_header.ar_conge_reveal,
+    .ar_request_header.ar_conge_reveal {
+        animation: none;
+    }
+
     .ar_request_quickfacts.ar_conge_reveal,
     .ar_request_panel.ar_conge_reveal {
         animation: arCongeFadeUp 460ms ease-out both;
@@ -476,7 +497,7 @@ $ar-soft: #f4f7f8;
     .ar_request_title {
         position: relative;
         min-height: 116px;
-        padding: 22px 210px 22px 20px;
+        padding: 22px 20px;
         border: 1px solid rgba(191, 213, 235, 0.8);
         border-radius: 8px;
         background:
@@ -487,128 +508,18 @@ $ar-soft: #f4f7f8;
         box-shadow: 0 18px 38px rgba(23, 32, 51, 0.08), 0 16px 42px rgba(15, 118, 110, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.88);
         overflow: hidden;
         transform: translateZ(0);
-        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
     }
 
     .ar_request_title::before,
     .ar_request_status::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.5) 34%, transparent 68%);
-        opacity: 0.7;
-        transform: translateX(-120%);
-        animation: arCongeHeaderSweep 4.8s ease-in-out infinite;
-        pointer-events: none;
+        display: none;
+        content: none;
     }
 
     .ar_request_title:hover {
         border-color: rgba(37, 99, 235, 0.28);
         box-shadow: 0 24px 48px rgba(23, 32, 51, 0.11), 0 0 0 4px rgba(20, 184, 166, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        transform: translateY(-3px) rotateX(1deg);
-    }
-
-    .ar_request_visual {
-        position: absolute;
-        top: 6px;
-        right: 38px;
-        z-index: 1;
-        --ar-doc-scale: 1;
-        width: 174px;
-        height: 94px;
-        pointer-events: none;
-        transform-style: preserve-3d;
-        animation: arCongeVisualFloat 5.2s ease-in-out infinite;
-    }
-
-    .ar_request_visual::before {
-        content: "";
-        position: absolute;
-        left: 18px;
-        right: 16px;
-        bottom: 4px;
-        height: 22px;
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.76);
-        box-shadow: 0 14px 22px rgba(15, 23, 42, 0.13);
-        transform: skewX(-13deg) rotate(-7deg);
-    }
-
-    .ar_request_visual::after {
-        content: "";
-        position: absolute;
-        left: 40px;
-        bottom: 0;
-        width: 112px;
-        height: 12px;
-        border-radius: 999px;
-        background: rgba(15, 118, 110, 0.16);
-        filter: blur(11px);
-        animation: arCongeVisualShadow 5.2s ease-in-out infinite;
-    }
-
-    .ar_doc_sheet,
-    .ar_doc_card,
-    .ar_doc_clip {
-        position: absolute;
-        display: block;
-        border-radius: 5px;
-    }
-
-    .ar_doc_sheet {
-        left: 18px;
-        bottom: 20px;
-        width: 124px;
-        height: 34px;
-        background: linear-gradient(135deg, #eef6ff 0%, #ffffff 100%);
-        box-shadow: 0 10px 22px rgba(30, 64, 175, 0.13);
-        transform: rotate(-8deg) skewX(-13deg);
-        animation: arCongePaperDrift 5.2s ease-in-out infinite;
-    }
-
-    .ar_doc_card {
-        right: 8px;
-        top: 10px;
-        width: 120px;
-        height: 46px;
-        border-radius: 6px;
-        background:
-            linear-gradient(90deg, transparent 0 19%, rgba(255, 255, 255, 0.8) 19% 26%, transparent 26% 100%),
-            linear-gradient(105deg, #0f766e 0%, #2563eb 72%, #1d4ed8 100%);
-        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
-        transform: rotate(-8deg) skewX(-12deg);
-        animation: arCongeCardTilt 5.2s ease-in-out infinite;
-    }
-
-    .ar_doc_card::before {
-        content: "";
-        position: absolute;
-        inset: 0 24px 0 48px;
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .ar_doc_card::after {
-        content: "";
-        position: absolute;
-        right: -7px;
-        top: -1px;
-        width: 8px;
-        height: 31px;
-        border-radius: 2px;
-        background: #ffb63f;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45) inset;
-    }
-
-    .ar_doc_clip {
-        left: 44px;
-        top: 6px;
-        width: 30px;
-        height: 44px;
-        background: linear-gradient(180deg, rgba(15, 118, 110, 0.22), rgba(15, 118, 110, 0.05));
-        box-shadow: 8px 18px 18px rgba(15, 23, 42, 0.11);
-        transform: rotate(-8deg) skewX(-12deg);
-        animation: arCongeClipBounce 5.2s ease-in-out infinite;
     }
 
     .ar_request_eyebrow {
@@ -627,7 +538,6 @@ $ar-soft: #f4f7f8;
         font-weight: 700;
         text-transform: uppercase;
         box-shadow: 0 6px 16px rgba(15, 118, 110, 0.1);
-        animation: arCongeBadgeGlow 3.8s ease-in-out infinite;
     }
 
     .ar_request_title h1 {
@@ -664,9 +574,8 @@ $ar-soft: #f4f7f8;
         box-shadow: 0 18px 34px rgba(15, 118, 110, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.14) inset, inset 0 1px 0 rgba(255, 255, 255, 0.18);
         overflow: hidden;
         text-align: center;
-        animation: arCongeStatusGradient 6s ease-in-out infinite, arCongeStatusFloat 4.5s ease-in-out infinite;
         transform: translateZ(0);
-        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
     }
 
     .ar_request_status::after {
@@ -678,7 +587,6 @@ $ar-soft: #f4f7f8;
         height: 92px;
         border: 1px solid rgba(255, 255, 255, 0.25);
         border-radius: 999px;
-        animation: arCongeRingSpin 9s linear infinite;
         box-shadow: -20px 56px 0 -43px rgba(255, 255, 255, 0.66), -20px 89px 0 -42px rgba(255, 255, 255, 0.52);
         pointer-events: none;
     }
@@ -686,11 +594,10 @@ $ar-soft: #f4f7f8;
     .ar_request_status:hover {
         border-color: rgba(147, 197, 253, 0.75);
         box-shadow: 0 25px 48px rgba(15, 118, 110, 0.26), 0 0 0 4px rgba(37, 99, 235, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-        transform: translateY(-4px) scale(1.01);
     }
 
     .ar_request_status.ar_conge_status_flash {
-        animation: arCongeStatusFlash 760ms ease-out both;
+        animation: none;
     }
 
     .ar_status_label {
@@ -853,126 +760,6 @@ $ar-soft: #f4f7f8;
     }
 }
 
-@keyframes arCongeStatusFlash {
-    0% {
-        box-shadow: 0 14px 28px rgba(15, 118, 110, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    }
-    35% {
-        box-shadow: 0 18px 36px rgba(37, 99, 235, 0.26), 0 0 0 4px rgba(37, 99, 235, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    }
-    100% {
-        box-shadow: 0 14px 28px rgba(15, 118, 110, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    }
-}
-
-@keyframes arCongeHeaderSweep {
-    0%,
-    58% {
-        opacity: 0;
-        transform: translateX(-120%);
-    }
-    68% {
-        opacity: 0.7;
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(120%);
-    }
-}
-
-@keyframes arCongeBadgeGlow {
-    0%,
-    100% {
-        background-position: 0% 50%;
-        box-shadow: 0 6px 16px rgba(15, 118, 110, 0.1);
-    }
-    50% {
-        background-position: 100% 50%;
-        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.14);
-    }
-}
-
-@keyframes arCongeStatusGradient {
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-}
-
-@keyframes arCongeStatusFloat {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-3px);
-    }
-}
-
-@keyframes arCongeRingSpin {
-    from {
-        transform: rotate(0deg) scale(1);
-    }
-    to {
-        transform: rotate(360deg) scale(1.05);
-    }
-}
-
-@keyframes arCongeVisualFloat {
-    0%,
-    100% {
-        transform: translateY(0) rotateX(0deg) scale(var(--ar-doc-scale, 1));
-    }
-    50% {
-        transform: translateY(-7px) rotateX(3deg) scale(var(--ar-doc-scale, 1));
-    }
-}
-
-@keyframes arCongeVisualShadow {
-    0%,
-    100% {
-        opacity: 0.72;
-        transform: scaleX(1);
-    }
-    50% {
-        opacity: 0.42;
-        transform: scaleX(0.82);
-    }
-}
-
-@keyframes arCongePaperDrift {
-    0%,
-    100% {
-        transform: translateY(0) rotate(-8deg) skewX(-13deg);
-    }
-    50% {
-        transform: translateY(4px) rotate(-9deg) skewX(-13deg);
-    }
-}
-
-@keyframes arCongeCardTilt {
-    0%,
-    100% {
-        transform: translateY(0) rotate(-8deg) skewX(-12deg);
-    }
-    50% {
-        transform: translateY(-4px) rotate(-5deg) skewX(-12deg);
-    }
-}
-
-@keyframes arCongeClipBounce {
-    0%,
-    100% {
-        transform: translateY(0) rotate(-8deg) skewX(-12deg);
-    }
-    50% {
-        transform: translateY(-5px) rotate(-7deg) skewX(-12deg);
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .o_form_view.ar_demande_conge_form * {
         animation-duration: 1ms !important;
@@ -1060,13 +847,7 @@ $ar-soft: #f4f7f8;
         }
 
         .ar_request_title {
-            padding-right: 168px;
-        }
-
-        .ar_request_visual {
-            right: 18px;
-            --ar-doc-scale: 0.86;
-            transform-origin: top right;
+            padding-right: 20px;
         }
 
         .ar_request_status {
@@ -1118,10 +899,6 @@ $ar-soft: #f4f7f8;
         .ar_request_title {
             min-height: 102px;
             padding-right: 20px;
-        }
-
-        .ar_request_visual {
-            display: none;
         }
 
         .ar_request_layout {
